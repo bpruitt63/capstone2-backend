@@ -25,7 +25,8 @@ CREATE TABLE location_ratings (
 
 CREATE TABLE trips (
     id SERIAL PRIMARY KEY,
-    distance NUMERIC
+    trip_name VARCHAR(30) NOT NULL,
+    distance NUMERIC NOT NULL
 );
 
 CREATE TABLE trip_locations (
@@ -42,6 +43,6 @@ CREATE TABLE user_trips (
         REFERENCES trips ON DELETE CASCADE,
     username TEXT
         REFERENCES users ON DELETE CASCADE,
-    trip_rating NUMERIC NOT NULL,
+    trip_rating NUMERIC,
     PRIMARY KEY (trip_id, username)
 );

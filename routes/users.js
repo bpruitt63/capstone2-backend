@@ -9,6 +9,7 @@ const {createToken} = require('../helpers');
 const {BadRequestError} = require('../expressError');
 const { ensureCorrectUser } = require("../middleware/auth");
 
+/** Registers new user.  Creates and returns token */
 router.post('/register', async function(req, res, next) {
     try{
         const validator = jsonschema.validate(req.body, registerSchema);
@@ -24,6 +25,7 @@ router.post('/register', async function(req, res, next) {
     };
 });
 
+/** Logs in user.  Creates token.  Returns token along with user info */
 router.post('/login', async function(req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, loginSchema);
@@ -44,6 +46,7 @@ router.post('/login', async function(req, res, next) {
     };
 });
 
+/** Retrieves info on logged in user */
 router.get("/:username", ensureCorrectUser, async function (req, res, next) {
     try {
       const user = await User.get(req.params.username);
@@ -53,6 +56,7 @@ router.get("/:username", ensureCorrectUser, async function (req, res, next) {
     }
 });
 
+/** Updates info on logged in user */
 router.patch('/:username', ensureCorrectUser, async function (req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, userUpdateSchema);

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const {SECRET_KEY} = require('./config');
 
+/** Creates token using JWT */
 function createToken(user) {
     let payload = {
         username: user.username,
@@ -11,6 +12,9 @@ function createToken(user) {
     return jwt.sign(payload, SECRET_KEY);
 };
 
+/** Creates SQL query for updating info when not all info is likely to 
+ * be updated.
+ */
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     const keys = Object.keys(dataToUpdate);
     if (keys.length === 0) throw new BadRequestError("No data");

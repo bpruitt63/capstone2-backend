@@ -7,7 +7,12 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 class User {
 
+    /** Creates new user */
     static async register({username, password, email, zipCode, country, units}) {
+        
+        /** Checks for unique username.  Throws error if username
+         * already in database
+         */
         const isDuplicate = await db.query(
             `SELECT username
             FROM users
@@ -18,6 +23,8 @@ class User {
             throw new BadRequestError("Username already taken");
         };
 
+
+        /** Hashes password and enters new user into database */
         const hashedPwd = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
         const result = await db.query(
@@ -37,6 +44,9 @@ class User {
         return user;
     };
 
+    /** Retrieves user information from database to ensure correct login
+     * information was provided
+     */
     static async login(username, password) {
         const result = await db.query(
             `SELECT username, 
@@ -51,6 +61,7 @@ class User {
 
         const user = result.rows[0];
 
+        /** Checks retrieved info, returns user if info is correct */
         if (user) {
             const isValid = await bcrypt.compare(password, user.hashedPwd);
             if (isValid === true) {
@@ -62,6 +73,7 @@ class User {
         throw new UnauthorizedError("Invalid username/password");
     };
 
+    /** Gets info on single user */
     static async get(username) {
         const result = await db.query(
             `SELECT username,
@@ -81,6 +93,7 @@ class User {
         return user;
     };
 
+    /** Updates info on a single user */
     static async update(username, data) {
         if (data.password) {
             data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);

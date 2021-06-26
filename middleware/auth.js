@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 
+/** Checks for valid token, stores in res.locals if exists */
 function authenticateJWT(req, res, next) {
     
     try {
@@ -16,6 +17,7 @@ function authenticateJWT(req, res, next) {
     };
 };
 
+/** Checks that res.locals user matches user in username params */
 function ensureCorrectUser(req, res, next) {
     try {
       if (!res.locals.user) throw new UnauthorizedError();
