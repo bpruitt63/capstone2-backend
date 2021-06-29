@@ -35,7 +35,7 @@ CREATE TABLE trip_locations (
     location_id TEXT
         REFERENCES locations ON DELETE CASCADE,
     location_position INTEGER NOT NULL,
-    PRIMARY KEY (trip_id, location_id)
+    PRIMARY KEY (trip_id, location_id, location_position)
 );
 
 CREATE TABLE user_trips (
