@@ -25,22 +25,29 @@ class Trip {
     };  
 
     /** Adds a location from a trip, and the position in order that 
-     * location was entered
+     * location was entered.
+     * Returns all entered info, along with location name.
      */
     static async addTripLocation(id, location, position) {
         const result = await db.query(
-            `INSERT INTO trip_locations
-            (trip_id, location_id, location_position)
-            VALUES ($1, $2, $3)
-            RETURNING trip_id AS "tripId", 
-                location_id AS "locationId",
-                location_position as "locationPosition"`,
+            `WITH inserted AS (
+                INSERT INTO trip_locations
+                (trip_id, location_id, location_position)
+                VALUES ($1, $2, $3)
+                RETURNING *
+            )
+            SELECT inserted.trip_id AS "tripId", 
+                    inserted.location_id AS "locationId",
+                    inserted.location_position as "locationPosition",
+                    locations.title AS "locationName"
+            FROM inserted
+            JOIN locations on inserted.location_id = locations.id`,
             [id, location, position]
         );
         const newLocation = result.rows[0];
         return newLocation;
     };
-
+    
     /** Gets all trips created by a specific user */
     static async getUserTrips(username) {
 
@@ -57,13 +64,10 @@ class Trip {
             ORDER BY trip_id DESC`,
             [username]
         );
-        let userTrips;
-        if (!tripResult.rows[0]) {
-            userTrips = 'You have not created any trips yet';
+        let userTrips = tripResult.rows;
+        if (!userTrips[0]) {
             return userTrips;
         };
-
-        userTrips = tripResult.rows;
 
         /** Gets array of locations for each trip retrieved above */
         for (let trip of userTrips) {
@@ -99,13 +103,10 @@ class Trip {
             ORDER BY trip_id DESC
             LIMIT 20`
         );
-        let trips;
-        if (!tripResult.rows[0]) {
-            trips = 'No trips found';
+        let trips = tripResult.rows;
+        if (!trips[0]) {
             return trips;
         };
-
-        trips = tripResult.rows;
 
         /** Gets array of locations for each trip retrieved above */
         for (let trip of trips) {
