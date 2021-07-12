@@ -19,5 +19,8 @@
     "jsonschema": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "supertest": "^6.1.3"
   }
 }
